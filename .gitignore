@@ -17,3 +17,14 @@ octopus/web/node_modules/
 octopus/web/dist/
 octopus/data/
 octopus/*.exe
+
+# IDE / 系统
+.kotlin/
+.idea/*
+.DS_Store
+*.keystore
+*.jks
+
+# 构建产物
+dist/
+.artifacts/

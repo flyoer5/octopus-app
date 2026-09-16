@@ -35,6 +35,10 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm run build
 
+      - name: Go 静态检查
+        working-directory: octopus
+        run: go vet ./...
+
       - name: Cross-compile octopus (android/arm64)
         working-directory: octopus
         run: |
