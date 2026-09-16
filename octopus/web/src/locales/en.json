@@ -44,8 +44,7 @@
     "group": "Group",
     "model": "Price",
     "log": "Log",
-    "setting": "Setting",
-    "chat": "Chat"
+    "setting": "Setting"
   },
   "toolbar": {
     "hideChannelName": "Blur channel names",
@@ -494,14 +493,5 @@
       "headerPreset": "Header Presets",
       "headerPresetHint": "Click to append preset headers"
     }
-  },
-  "chat": {
-    "channel": "Channel",
-    "model": "Model",
-    "apiKey": "API Key",
-    "selectPlaceholder": "Select",
-    "clear": "Clear",
-    "emptyHint": "Pick a channel and model, then start chatting",
-    "inputPlaceholder": "Type a message, Enter to send, Shift+Enter for newline"
   }
 }

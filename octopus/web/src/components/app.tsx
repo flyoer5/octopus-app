@@ -24,7 +24,6 @@ const Channel = lazy(() => pageImports.channel().then((module) => ({ default: mo
 const Group = lazy(() => pageImports.group().then((module) => ({ default: module.Group })));
 const Model = lazy(() => pageImports.model().then((module) => ({ default: module.Model })));
 const Log = lazy(() => pageImports.log().then((module) => ({ default: module.Log })));
-const Chat = lazy(() => pageImports.chat().then((module) => ({ default: module.Chat })));
 const Setting = lazy(() => pageImports.setting().then((module) => ({ default: module.Setting })));
 const HomeActions = lazy(() => pageImports.home().then((module) => ({ default: module.HomeActions })));
 const ChannelActions = lazy(() => pageImports.channel().then((module) => ({ default: module.ChannelActions })));
@@ -149,7 +148,6 @@ export function AppContainer() {
                             {visibleItem === 'channel' && <Channel />}
                             {visibleItem === 'group' && <Group />}
                             {visibleItem === 'model' && <Model />}
-                            {visibleItem === 'chat' && <Chat />}
                             {visibleItem === 'log' && <Log />}
                             {visibleItem === 'setting' && <Setting />}
                         </motion.div>

@@ -44,8 +44,7 @@
     "group": "分組",
     "model": "價格",
     "log": "日誌",
-    "setting": "設定",
-    "chat": "測試"
+    "setting": "設定"
   },
   "toolbar": {
     "hideChannelName": "模糊渠道名稱",
@@ -494,14 +493,5 @@
       "headerPreset": "Header 預設",
       "headerPresetHint": "點擊追加預設 Header"
     }
-  },
-  "chat": {
-    "channel": "渠道",
-    "model": "模型",
-    "apiKey": "API Key",
-    "selectPlaceholder": "請選擇",
-    "clear": "清空",
-    "emptyHint": "選擇渠道與模型，輸入消息開始測試",
-    "inputPlaceholder": "輸入消息，Enter 發送，Shift+Enter 換行"
   }
 }
