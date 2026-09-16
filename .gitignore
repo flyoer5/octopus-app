@@ -10,4 +10,4 @@ captures/
 *.aab
 *.ap_
 *.dex
-app/src/main/assets/octopus-android-arm64
+app/src/main/jniLibs/

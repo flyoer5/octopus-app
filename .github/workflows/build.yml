@@ -51,16 +51,17 @@ jobs:
       - name: Verify binary
         run: file octopus-src/octopus-android-arm64
 
-      - name: Stage binary into APK assets
+      - name: Stage binary into jniLibs (liboctopus.so)
         run: |
-          mkdir -p app/src/main/assets
-          cp octopus-src/octopus-android-arm64 app/src/main/assets/octopus-android-arm64
-          ls -lh app/src/main/assets/
+          mkdir -p app/src/main/jniLibs/arm64-v8a
+          cp octopus-src/octopus-android-arm64 app/src/main/jniLibs/arm64-v8a/liboctopus.so
+          chmod +x app/src/main/jniLibs/arm64-v8a/liboctopus.so
+          ls -lh app/src/main/jniLibs/arm64-v8a/
 
       - uses: actions/upload-artifact@v4
         with:
           name: octopus-android-arm64
-          path: app/src/main/assets/octopus-android-arm64
+          path: app/src/main/jniLibs/arm64-v8a/liboctopus.so
 
   build-apk:
     name: 构建 APK
@@ -72,7 +73,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: octopus-android-arm64
-          path: app/src/main/assets/
+          path: app/src/main/jniLibs/arm64-v8a/
 
       - uses: actions/setup-java@v4
         with:
