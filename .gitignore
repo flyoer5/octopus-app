@@ -11,3 +11,9 @@ captures/
 *.ap_
 *.dex
 app/src/main/jniLibs/
+
+# octopus 上游源码（保持与上游一致的忽略）
+octopus/web/node_modules/
+octopus/web/dist/
+octopus/data/
+octopus/*.exe

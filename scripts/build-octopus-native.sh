@@ -3,7 +3,7 @@
 # 用法: ./scripts/build-octopus-native.sh [octopus源码目录]
 set -euo pipefail
 
-SRC_DIR="${1:-octopus-src}"
+SRC_DIR="${1:-octopus}"
 OUT="${2:-app/src/main/jniLibs/arm64-v8a/liboctopus.so}"
 
 if [ ! -d "$SRC_DIR" ]; then
