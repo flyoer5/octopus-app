@@ -5,7 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class OctopusConfigTest {
-
     @Test
     fun `default port is 18080`() {
         val config = OctopusConfig.default(dataDir = "/tmp/octopus")
@@ -44,10 +43,11 @@ class OctopusConfigTest {
 
     @Test
     fun `custom port takes effect`() {
-        val config = OctopusConfig(
-            databasePath = "/tmp/data.db",
-            port = 19090,
-        )
+        val config =
+            OctopusConfig(
+                databasePath = "/tmp/data.db",
+                port = 19090,
+            )
         assertEquals("19090", config.toEnvMap()[OctopusConfig.ENV_PORT])
     }
 
