@@ -63,8 +63,11 @@ object OctopusEngine {
         }
     }
 
-    fun isPortOpen(port: Int, timeoutMs: Int = 1200): Boolean {
-        return try {
+    fun isPortOpen(
+        port: Int,
+        timeoutMs: Int = 1200,
+    ): Boolean =
+        runCatching {
             val conn = URL(HEALTH_URL.format(port)).openConnection() as HttpURLConnection
             conn.connectTimeout = timeoutMs
             conn.readTimeout = timeoutMs
@@ -72,13 +75,9 @@ object OctopusEngine {
             val code = conn.responseCode
             conn.disconnect()
             code in 200..499
-        } catch (e: IOException) {
-            false
-        }
-    }
+        }.getOrDefault(false)
 
-    fun workDir(context: Context): File =
-        File(context.filesDir, "octopus").apply { mkdirs() }
+    fun workDir(context: Context): File = File(context.filesDir, "octopus").apply { mkdirs() }
 
     private fun extractBinary(context: Context): File? {
         val dir = File(workDir(context), "bin").apply { mkdirs() }

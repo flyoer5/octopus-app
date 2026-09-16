@@ -11,13 +11,14 @@ data class OctopusConfig(
     val databasePath: String,
     val logLevel: String = "info",
 ) {
-    fun toEnvMap(): Map<String, String> = mapOf(
-        ENV_HOST to host,
-        ENV_PORT to port.toString(),
-        ENV_DATABASE_TYPE to databaseType,
-        ENV_DATABASE_PATH to databasePath,
-        ENV_LOG_LEVEL to logLevel,
-    )
+    fun toEnvMap(): Map<String, String> =
+        mapOf(
+            ENV_HOST to host,
+            ENV_PORT to port.toString(),
+            ENV_DATABASE_TYPE to databaseType,
+            ENV_DATABASE_PATH to databasePath,
+            ENV_LOG_LEVEL to logLevel,
+        )
 
     companion object {
         const val DEFAULT_HOST = "0.0.0.0"

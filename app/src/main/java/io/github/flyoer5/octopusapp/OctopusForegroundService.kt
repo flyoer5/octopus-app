@@ -10,12 +10,12 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 
-/**
- * 前台服务：让 octopus 进程在后台持续运行。
- */
 class OctopusForegroundService : Service() {
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int {
         createChannel()
         startForeground(NOTIFICATION_ID, buildNotification())
         return START_STICKY
@@ -30,23 +30,25 @@ class OctopusForegroundService : Service() {
 
     private fun createChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Octopus 服务",
-                NotificationManager.IMPORTANCE_LOW,
-            )
+            val channel =
+                NotificationChannel(
+                    CHANNEL_ID,
+                    "Octopus 服务",
+                    NotificationManager.IMPORTANCE_LOW,
+                )
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
     }
 
-    private fun buildNotification(): Notification =
-        NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Octopus 运行中")
-            .setContentText("LLM 聚合网关监听 127.0.0.1:${OctopusConfig.DEFAULT_PORT}")
-            .setSmallIcon(android.R.drawable.stat_sys_data_connected)
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .build()
+    private fun buildNotification(): Notification {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        builder.setContentTitle("Octopus 运行中")
+        builder.setContentText("LLM 聚合网关监听 127.0.0.1:${OctopusConfig.DEFAULT_PORT}")
+        builder.setSmallIcon(android.R.drawable.stat_sys_data_connected)
+        builder.setOngoing(true)
+        builder.setPriority(NotificationCompat.PRIORITY_LOW)
+        return builder.build()
+    }
 
     companion object {
         private const val CHANNEL_ID = "octopus_service"
@@ -54,14 +56,17 @@ class OctopusForegroundService : Service() {
 
         fun start(context: Context) {
             val intent = Intent(context, OctopusForegroundService::class.java)
-            ContextCompat_startForeground(context, intent)
+            startForegroundCompat(context, intent)
         }
 
         fun stop(context: Context) {
             context.stopService(Intent(context, OctopusForegroundService::class.java))
         }
 
-        private fun ContextCompat_startForeground(context: Context, intent: Intent) {
+        private fun startForegroundCompat(
+            context: Context,
+            intent: Intent,
+        ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {
