@@ -1,0 +1,112 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-native:
+    name: 交叉编译 octopus 二进制
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout octopus source
+        uses: actions/checkout@v4
+        with:
+          repository: bestruirui/octopus
+          path: octopus-src
+          ref: master
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: octopus-src/web/pnpm-lock.yaml
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache-dependency-path: octopus-src/go.sum
+
+      - name: Build frontend
+        working-directory: octopus-src/web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+
+      - name: Cross-compile octopus (android/arm64)
+        working-directory: octopus-src
+        run: |
+          CGO_ENABLED=0 GOOS=android GOARCH=arm64 go build \
+            -trimpath -ldflags "-s -w" -o octopus-android-arm64 .
+
+      - name: Verify binary
+        run: file octopus-src/octopus-android-arm64
+
+      - name: Stage binary into APK assets
+        run: |
+          mkdir -p app/src/main/assets
+          cp octopus-src/octopus-android-arm64 app/src/main/assets/octopus-android-arm64
+          ls -lh app/src/main/assets/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: octopus-android-arm64
+          path: app/src/main/assets/octopus-android-arm64
+
+  build-apk:
+    name: 构建 APK
+    needs: build-native
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: octopus-android-arm64
+          path: app/src/main/assets/
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: ktlint 代码规范检查
+        run: ./gradlew ktlintCheck --no-daemon
+
+      - name: 单元测试
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+      - name: 构建 Release APK
+        run: ./gradlew assembleRelease --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: octopus-app-apk
+          path: app/build/outputs/apk/release/*.apk
+
+  release:
+    name: 发布 Release
+    needs: build-apk
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: octopus-app-apk
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: '*.apk'
+          generate_release_notes: true
