@@ -24,18 +24,8 @@
             android:id="@+id/tvPort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="12dp"
             android:textSize="13sp" />
-
-        <Button
-            android:id="@+id/btnFont"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:text="Aa"
-            android:textSize="14sp"
-            android:minWidth="48dp"
-            android:contentDescription="字体大小" />
 
         <Button
             android:id="@+id/btnToggle"
