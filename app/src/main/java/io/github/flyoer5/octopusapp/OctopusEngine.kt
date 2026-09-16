@@ -8,14 +8,15 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * 负责管理 octopus 二进制生命周期。二进制以 liboctopus.so 形式打包在
- * jniLibs 中，系统安装时提取到 nativeLibraryDir（可执行目录），规避
- * Android 10+ 对 app 私有目录的 noexec 限制。
+ * 管理 octopus 二进制生命周期。二进制以 liboctopus.so 打包在 jniLibs，
+ * 系统提取到 nativeLibraryDir（可执行目录），规避 Android 10+ noexec 限制。
+ * 配置通过 --config 文件注入（viper 环境变量不可靠）。
  */
 object OctopusEngine {
     private const val TAG = "OctopusEngine"
 
     const val BINARY_NAME = "liboctopus.so"
+    const val CONFIG_NAME = "config.json"
     const val HEALTH_URL = "http://127.0.0.1:%d/"
 
     @Volatile
@@ -32,11 +33,13 @@ object OctopusEngine {
             return false
         }
         val workDir = workDir(context)
-        val config = OctopusConfig.default(File(workDir, "data.db").absolutePath)
+        val configFile = File(workDir, CONFIG_NAME)
+        if (!writeConfigFile(configFile, workDir)) {
+            return false
+        }
 
-        val pb = ProcessBuilder(binary.absolutePath, "start")
+        val pb = ProcessBuilder(binary.absolutePath, "start", "--config", configFile.absolutePath)
         pb.directory(workDir)
-        pb.environment().putAll(config.toEnvMap())
         pb.redirectErrorStream(true)
 
         return try {
@@ -86,6 +89,16 @@ object OctopusEngine {
     fun binaryPath(context: Context): File = File(context.applicationInfo.nativeLibraryDir, BINARY_NAME)
 
     fun workDir(context: Context): File = File(context.filesDir, "octopus").apply { mkdirs() }
+
+    private fun writeConfigFile(
+        configFile: File,
+        workDir: File,
+    ): Boolean =
+        runCatching {
+            val config = OctopusConfig.default(workDir.absolutePath)
+            configFile.writeText(config.toJson())
+            true
+        }.getOrDefault(false)
 
     private fun pumpOutput(p: Process) {
         Thread {

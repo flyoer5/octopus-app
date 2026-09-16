@@ -30,29 +30,33 @@ class OctopusConfigTest {
     }
 
     @Test
-    fun `toEnvMap contains expected octopus env vars`() {
-        val config = OctopusConfig.default(dataDir = "/data/octopus")
-        val env = config.toEnvMap()
-
-        assertEquals("0.0.0.0", env[OctopusConfig.ENV_HOST])
-        assertEquals("18080", env[OctopusConfig.ENV_PORT])
-        assertEquals("sqlite", env[OctopusConfig.ENV_DATABASE_TYPE])
-        assertEquals("/data/octopus/data.db", env[OctopusConfig.ENV_DATABASE_PATH])
-        assertEquals("info", env[OctopusConfig.ENV_LOG_LEVEL])
-    }
-
-    @Test
     fun `custom port takes effect`() {
         val config =
             OctopusConfig(
                 databasePath = "/tmp/data.db",
                 port = 19090,
             )
-        assertEquals("19090", config.toEnvMap()[OctopusConfig.ENV_PORT])
+        assertEquals(19090, config.port)
     }
 
     @Test
-    fun `env keys use octopus prefix`() {
-        assertTrue(OctopusConfig.ENV_PORT.startsWith("OCTOPUS_"))
+    fun `toJson contains server port 18080`() {
+        val config = OctopusConfig.default(dataDir = "/data/octopus")
+        assertTrue(config.toJson().contains("\"port\": 18080"))
+    }
+
+    @Test
+    fun `toJson contains absolute database path`() {
+        val config = OctopusConfig.default(dataDir = "/data/octopus")
+        assertTrue(config.toJson().contains("\"path\": \"/data/octopus/data.db\""))
+    }
+
+    @Test
+    fun `toJson contains all config sections`() {
+        val json = OctopusConfig.default(dataDir = "/data/octopus").toJson()
+        assertTrue(json.contains("\"server\""))
+        assertTrue(json.contains("\"database\""))
+        assertTrue(json.contains("\"log\""))
+        assertTrue(json.contains("\"type\": \"sqlite\""))
     }
 }
