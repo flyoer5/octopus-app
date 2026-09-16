@@ -49,7 +49,6 @@ android {
             useLegacyPackaging = true
         }
     }
-
 }
 
 dependencies {
