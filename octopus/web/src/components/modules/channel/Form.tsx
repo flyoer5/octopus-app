@@ -8,6 +8,7 @@ import {
     useUpdateChannel,
 } from '@/api/channel';
 import { CHANNEL_PRESETS, type ChannelPreset } from '@/lib/channel-presets';
+import { HEADER_PRESETS } from '@/lib/header-presets';
 import { useMorphingDialog } from '@/components/ui/morphing-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -247,6 +248,22 @@ function ChannelFormFields({ channel, onBack }: { channel?: ChannelDetail; onBac
                                     >
                                         <Plus className="size-4" />
                                     </IconButton>
+                                </div>
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className="text-xs text-muted-foreground">{t('headerPreset')}</span>
+                                    {HEADER_PRESETS.map((preset) => (
+                                        <button
+                                            key={preset.id}
+                                            type="button"
+                                            onClick={() => setState({
+                                                ...state,
+                                                custom_header: [...state.custom_header, ...preset.headers],
+                                            })}
+                                            className="rounded-full border border-border px-2.5 py-1 text-xs transition-colors hover:bg-accent"
+                                        >
+                                            {preset.name}
+                                        </button>
+                                    ))}
                                 </div>
                                 {/* 列名只在有行时出现, 两列各占一半, 与下方输入框对齐; 末尾留出删除按钮的宽度。 */}
                                 {state.custom_header.length > 0 && (
