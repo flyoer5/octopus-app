@@ -1,7 +1,9 @@
 package io.github.flyoer5.octopusapp
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -35,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupWebView()
+        binding.btnFont.setOnClickListener { showFontDialog() }
+        applyFontSize()
         binding.btnToggle.setOnClickListener { onToggleClicked() }
 
         if (OctopusEngine.isAlive()) {
@@ -48,6 +52,32 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         handler.removeCallbacks(healthRunnable)
         super.onDestroy()
+    }
+
+    private fun showFontDialog() {
+        val options = arrayOf("跟随系统", "小", "标准", "大")
+        val current = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getInt(KEY_FONT_MODE, 0)
+        val dialog = AlertDialog.Builder(this)
+        dialog.setTitle("字体大小")
+        dialog.setSingleChoiceItems(options, current) { _, which ->
+            val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+            prefs.edit().putInt(KEY_FONT_MODE, which).apply()
+            applyFontSize()
+        }
+        dialog.setPositiveButton("确定", null)
+        dialog.show()
+    }
+
+    private fun applyFontSize() {
+        val mode = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getInt(KEY_FONT_MODE, 0)
+        val zoom =
+            when (mode) {
+                1 -> 85
+                2 -> 100
+                3 -> 115
+                else -> (Resources.getSystem().configuration.fontScale * 100).toInt()
+            }
+        binding.webView.settings.textZoom = zoom.coerceIn(50, 200)
     }
 
     private fun setupWebView() {
@@ -122,5 +152,7 @@ class MainActivity : AppCompatActivity() {
         private const val WEB_URL = "http://127.0.0.1:${OctopusConfig.DEFAULT_PORT}/"
         private const val POLL_INTERVAL_MS = 2000L
         private const val START_WAIT_MS = 1500L
+        private const val PREFS_NAME = "octopus_prefs"
+        private const val KEY_FONT_MODE = "font_mode"
     }
 }
