@@ -44,7 +44,7 @@ class OctopusForegroundService : Service() {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
         builder.setContentTitle("Octopus 运行中")
         builder.setContentText("LLM 聚合网关监听 127.0.0.1:${OctopusConfig.DEFAULT_PORT}")
-        builder.setSmallIcon(android.R.drawable.stat_sys_data_connected)
+        builder.setSmallIcon(R.drawable.ic_stat_octopus)
         builder.setOngoing(true)
         builder.setPriority(NotificationCompat.PRIORITY_LOW)
         return builder.build()
